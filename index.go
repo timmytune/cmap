@@ -2,10 +2,34 @@ package cmap
 
 import (
 	"errors"
+	"fmt"
 	"sync"
-
-	ers "code.yihan.org.ng/abn/shared/errs"
 )
+
+func JoinErrors(errs ...error) error {
+	var joinErrsR func(string, int, ...error) error
+	joinErrsR = func(soFar string, count int, errs ...error) error {
+		if len(errs) == 0 {
+			if count == 0 {
+				return nil
+			}
+			return fmt.Errorf(soFar)
+		}
+		current := errs[0]
+		next := errs[1:]
+		if current == nil {
+			return joinErrsR(soFar, count, next...)
+		}
+		count++
+		if count == 1 {
+			return joinErrsR(fmt.Sprintf("%s", current), count, next...)
+		} else if count == 2 {
+			return joinErrsR(fmt.Sprintf("1: %s\n2: %s", soFar, current), count, next...)
+		}
+		return joinErrsR(fmt.Sprintf("%s\n%d: %s", soFar, count, current), count, next...)
+	}
+	return joinErrsR("", 0, errs...)
+}
 
 type Value struct {
 	Keys   map[string]string
@@ -687,7 +711,7 @@ func (a *Accesser) Delete() (err error) {
 	}
 
 	if len(errs) > 0 {
-		err = ers.JoinErrors(errs...)
+		err = JoinErrors(errs...)
 	}
 
 	return
