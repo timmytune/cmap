@@ -1,6 +1,8 @@
 package cmap
 
 import (
+	"bytes"
+	"encoding/json"
 	"log"
 	"strconv"
 	"testing"
@@ -93,6 +95,64 @@ func TestOneM(t *testing.T) {
 		if re.(int) != 1 {
 			t.Error("expected 1 got", re)
 		}
+	}
+
+	accr := cmM.Field("email", "tosin5000@yihan.org.ng")
+	if accr.err != nil {
+		t.Error("accessor should not have error: ", accr.err)
+	}
+
+	if accr.Fv == nil {
+		t.Error("accessor should have field value: ")
+	}
+
+	dat := EncodeData(accr.Fv.Data, "phone", map[string]struct{}{"email": {}, "phone": {}}, map[string]struct{}{})
+
+	data, _, err := DecodeNextUint16Data(dat, 0)
+	if err != nil {
+		t.Error("get data value threw error: ", err)
+	}
+
+	idByte, err := GetDataID(data)
+	if err != nil {
+		t.Error("get data id threw error: ", err)
+	}
+
+	if string(idByte) != "08154864015000" {
+		t.Error("wrong id gotten ID: ", string(idByte))
+	}
+
+	emailByte, err := GetDataFieldTag1(data, []byte("email"))
+	if err != nil {
+		t.Error("get data tag threw error: ", err)
+	}
+
+	if string(emailByte) != "tosin5000@yihan.org.ng" && string(emailByte) != "yinka5000@yihan.org.ng" {
+		t.Error("wrong id gotten ID: ", string(emailByte))
+	}
+
+	indexByte, err := GetDataValue(data, []byte("index"))
+	if err != nil {
+		t.Error("get data value threw error: ", err)
+	}
+
+	var index int
+	err = json.Unmarshal(indexByte, &index)
+	if err != nil {
+		t.Error("get index value threw error: ", err)
+	}
+
+	if index != 5000 {
+		t.Error("index not 5000 got:  ", index)
+	}
+
+	da, _, err := RemoveNextUint16Data(dat, 0)
+	if err != nil {
+		t.Error("remove value threw error: ", err)
+	}
+
+	if !bytes.Equal(da, dat) {
+		t.Error("data shoud be equal: ")
 	}
 
 	for _, v := range cmM.FieldCopy("phone") {
