@@ -113,7 +113,7 @@ func TestOneM(t *testing.T) {
 		t.Error("get data value threw error: ", err)
 	}
 
-	idByte, err := GetDataID(data)
+	idByte, err := GetDataID(data, 0)
 	if err != nil {
 		t.Error("get data id threw error: ", err)
 	}
@@ -122,7 +122,7 @@ func TestOneM(t *testing.T) {
 		t.Error("wrong id gotten ID: ", string(idByte))
 	}
 
-	emailByte, err := GetDataFieldTag1(data, []byte("email"))
+	emailByte, err := GetDataFieldTag1(data, []byte("email"), 0)
 	if err != nil {
 		t.Error("get data tag threw error: ", err)
 	}
@@ -131,7 +131,7 @@ func TestOneM(t *testing.T) {
 		t.Error("wrong id gotten ID: ", string(emailByte))
 	}
 
-	indexByte, err := GetDataValue(data, []byte("index"))
+	indexByte, err := GetDataValue(data, []byte("index"), 0)
 	if err != nil {
 		t.Error("get data value threw error: ", err)
 	}

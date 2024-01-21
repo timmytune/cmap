@@ -168,13 +168,11 @@ func EncodeData(data map[*ValueM]struct{}, field_id string, fields, values map[s
 ]
 */
 
-func GetDataFieldTag1(data []byte, field []byte) ([]byte, error) {
+func GetDataFieldTag1(data []byte, field []byte, pointer int) ([]byte, error) {
 
 	if data == nil {
 		return nil, errors.New("nil data provided")
 	}
-
-	pointer := 0
 
 	//check for id
 	_, next, err := DecodeNextUint8Data(data, pointer)
@@ -222,13 +220,11 @@ func GetDataFieldTag1(data []byte, field []byte) ([]byte, error) {
 	return nil, errors.New("provided field not in field data")
 }
 
-func GetDataValue(data []byte, key []byte) ([]byte, error) {
+func GetDataValue(data []byte, key []byte, pointer int) ([]byte, error) {
 
 	if data == nil {
 		return nil, errors.New("nil data provided")
 	}
-
-	pointer := 0
 
 	//check for id
 	_, next, err := DecodeNextUint8Data(data, pointer)
@@ -277,13 +273,11 @@ func GetDataValue(data []byte, key []byte) ([]byte, error) {
 	return nil, errors.New("provided field not in values data")
 }
 
-func GetDataID(data []byte) ([]byte, error) {
+func GetDataID(data []byte, pointer int) ([]byte, error) {
 
 	if data == nil {
 		return nil, errors.New("nil data provided")
 	}
-
-	pointer := 0
 
 	ret, _, err := DecodeNextUint8Data(data, pointer)
 
